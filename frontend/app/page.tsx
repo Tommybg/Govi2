@@ -46,7 +46,9 @@ export default function Page() {
   return (
     <main
       className="flex min-h-screen flex-col items-center justify-between p-24"
-      style={{ backgroundColor: '#02215b' }}
+      style={{
+        backgroundColor: '#02215b',
+      }}
     >
       <LiveKitRoom
         token={connectionDetails?.participantToken}
@@ -68,6 +70,14 @@ export default function Page() {
         <RoomAudioRenderer />
         <NoAgentNotification state={agentState} />
       </LiveKitRoom>
+
+      <footer className="text-center text-white mt-10">
+        <p>Laboratorio de Gobierno de la Universidad de La Sabana.</p>
+        <p>Institución de educación superior sujeta a inspección y vigilancia por el Ministerio de Educación Nacional.</p>
+        <p>© 2025 Universidad de La Sabana. Todos los derechos reservados.</p>
+        <p>Contáctenos al correo: <a href="mailto:dirgovlab@unisabana.edu.co" className="underline">dirgovlab@unisabana.edu.co</a>.</p>
+        <p>Campus del Puente del Común, Km. 7, Autopista Norte de Bogotá. Chía, Cundinamarca, Colombia.</p>
+      </footer>
     </main>
   );
 }
@@ -117,10 +127,10 @@ function ControlBar(props: {
             className="uppercase absolute left-1/2 -translate-x-1/2 px-4 py-2 bg-gradient-to-r from-white to-gray-300 text-[#02215b] rounded-md"
             onClick={() => props.onConnectButtonClicked()}
           >
-            Inicia una Conversacion
+            Pregúntame lo que quieras del GovLab 😀
           </motion.button>
         )}
-      </AnimatePresence>
+      </AnimatePresence>  
       <AnimatePresence>
         {props.agentState !== "disconnected" &&
           props.agentState !== "connecting" && (
