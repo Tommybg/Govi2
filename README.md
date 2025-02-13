@@ -1,6 +1,6 @@
 # Govi - GovLab AI Assistant
 
-![Govi - GovLab AI Assistant](image.png)
+![Govi - GovLab AI Assistant](https://i.ibb.co/jvmwnqnf/Screenshot-2025-02-12-194345.png)
 
 ## Descripción
 Govi es un asistente de IA conversacional desarrollado por GovLab, diseñado específicamente para transformar la gestión pública a través de interacciones en tiempo real. Utiliza tecnologías avanzadas de procesamiento de lenguaje natural y análisis de voz para proporcionar asistencia inteligente en el sector público.
