@@ -226,12 +226,9 @@ async def run_multimodal_agent(ctx: JobContext, participant: rtc.RemoteParticipa
 
 if __name__ == "__main__":
     try:
-        # Set up the worker with specific room name
         cli.run_app(
             WorkerOptions(
                 entrypoint_fnc=entrypoint,
-                # This is how you specify the room name
-                room_name="govi_fixed_room"  # Must match the frontend
             )
         )
     except Exception as e:
