@@ -182,7 +182,7 @@ async def run_multimodal_agent(ctx: JobContext, participant: rtc.RemoteParticipa
             - Innovación en servicios públicos
 """, 
 
-                    voice="sage",
+                    voice="echo",
                     temperature=0.6,
                     model="gpt-4o-realtime-preview",  # Using the latest stable model
                     turn_detection=openai.realtime.ServerVadOptions(
