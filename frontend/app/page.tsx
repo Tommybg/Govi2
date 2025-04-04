@@ -127,7 +127,7 @@ function ControlBar(props: {
             className="uppercase absolute left-1/2 -translate-x-1/2 px-4 py-2 bg-gradient-to-r from-white to-gray-300 text-[#02215b] rounded-md"
             onClick={() => props.onConnectButtonClicked()}
           >
-            Pregúntame lo que quieras del GovLab 😀
+           Haz click acá y pregúntame lo que quieras del Govlab 😀
           </motion.button>
         )}
       </AnimatePresence>  
