@@ -15,18 +15,20 @@ from livekit.agents import (
     WorkerOptions,
     cli,
 )
-# Based on the docs: "from livekit.plugins import openai, silero"
-# Silero provides the VAD, OpenAI provides the realtime LLM + STT
+# Import the plugins that are mentioned in your docs
 from livekit.plugins import openai, silero
 
+# Load environment variables from .env.local
 load_dotenv(dotenv_path=".env.local")
 
+# Configure logging
 logger = logging.getLogger("my-worker")
 logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 logger.addHandler(handler)
 
+# Verify required environment variables
 required_env_vars = ['OPENAI_API_KEY', 'LIVEKIT_API_KEY', 'LIVEKIT_API_SECRET']
 for var in required_env_vars:
     if not os.getenv(var):
@@ -165,7 +167,7 @@ BENEFICIOS CLAVE A COMUNICAR:
         chat_ctx: llm.ChatContext,
         new_message: llm.ChatMessage
     ) -> None:
-        # Keep only the last 15 items
+        # Keep the most recent 15 items in the chat context.
         chat_ctx = chat_ctx.copy()
         if len(chat_ctx.items) > 15:
             chat_ctx.items = chat_ctx.items[-15:]
@@ -178,20 +180,17 @@ async def entrypoint(ctx: JobContext):
 
         logger.info("Initializing agent session...")
 
-        # 1) Create the Realtime LLM model (just the text generation + voice name).
-        #    According to the docs, we do NOT pass VAD or turn detection in here.
+        # 1) Create the realtime LLM model
         model = openai.realtime.RealtimeModel(
             voice="sage",
             model="gpt-4o-realtime-preview",
             temperature=0.6,
         )
 
-        # 2) Create the AgentSession, specifying:
-        #    - stt=openai.realtime.RealtimeSTT() for speech recognition
-        #    - vad=silero.VAD.load() to enable basic VAD
+        # 2) Create the AgentSession without specifying an STT;
+        #    we only provide the VAD (via silero.VAD.load()) as per the docs.
         session = AgentSession(
             llm=model,
-            stt=openai.realtime.RealtimeSTT(),
             vad=silero.VAD.load(),
         )
 
@@ -202,7 +201,7 @@ async def entrypoint(ctx: JobContext):
             agent=agent,
         )
 
-        # 4) Send an initial greeting from the assistant
+        # 4) Generate an initial greeting
         await session.generate_reply(
             instructions="Saluda al usuario de manera cordial e introduciendo al Govlab"
         )
