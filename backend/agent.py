@@ -15,7 +15,6 @@ from livekit.agents import (
     WorkerOptions,
     cli,
 )
-from livekit.agents.events import RunContext
 from livekit.plugins import openai
 
 # Load environment variables
