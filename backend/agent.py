@@ -15,21 +15,18 @@ from livekit.agents import (
     WorkerOptions,
     cli,
 )
-from livekit.plugins import openai
-# Import the ServerVAD class from the turn_detector plugin
-from livekit.plugins.turn_detector.server_vad import ServerVAD
+# Based on the docs: "from livekit.plugins import openai, silero"
+# Silero provides the VAD, OpenAI provides the realtime LLM + STT
+from livekit.plugins import openai, silero
 
-# Load environment variables
 load_dotenv(dotenv_path=".env.local")
 
-# Configure logging
 logger = logging.getLogger("my-worker")
 logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 logger.addHandler(handler)
 
-# Verify environment variables
 required_env_vars = ['OPENAI_API_KEY', 'LIVEKIT_API_KEY', 'LIVEKIT_API_SECRET']
 for var in required_env_vars:
     if not os.getenv(var):
@@ -161,14 +158,14 @@ BENEFICIOS CLAVE A COMUNICAR:
 - Optimización de recursos 
 - Automatización de procesos 
 - Innovación en servicios públicos 
-"""),
+""")
 
     async def on_user_turn_completed(
         self,
         chat_ctx: llm.ChatContext,
         new_message: llm.ChatMessage
     ) -> None:
-        # Keep context to the last 15 turns
+        # Keep only the last 15 items
         chat_ctx = chat_ctx.copy()
         if len(chat_ctx.items) > 15:
             chat_ctx.items = chat_ctx.items[-15:]
@@ -178,27 +175,24 @@ async def entrypoint(ctx: JobContext):
     try:
         logger.info(f"Connecting to room {ctx.room.name}")
         await ctx.connect()
-        
+
         logger.info("Initializing agent session...")
 
-        # 1) Create the Realtime LLM model (just handles text generation + TTS voice)
+        # 1) Create the Realtime LLM model (just the text generation + voice name).
+        #    According to the docs, we do NOT pass VAD or turn detection in here.
         model = openai.realtime.RealtimeModel(
             voice="sage",
-            temperature=0.6,
             model="gpt-4o-realtime-preview",
+            temperature=0.6,
         )
 
-        # 2) Create the AgentSession, specifying the STT and VAD for turn detection
+        # 2) Create the AgentSession, specifying:
+        #    - stt=openai.realtime.RealtimeSTT() for speech recognition
+        #    - vad=silero.VAD.load() to enable basic VAD
         session = AgentSession(
             llm=model,
-            # Speech-to-Text for inbound user audio
             stt=openai.realtime.RealtimeSTT(),
-            # VAD for detecting when the user stops talking
-            vad=ServerVAD(
-                threshold=0.6,
-                prefix_padding_ms=200,
-                silence_duration_ms=500
-            ),
+            vad=silero.VAD.load(),
         )
 
         # 3) Create and start the agent
@@ -208,11 +202,11 @@ async def entrypoint(ctx: JobContext):
             agent=agent,
         )
 
-        # 4) Send an initial greeting
+        # 4) Send an initial greeting from the assistant
         await session.generate_reply(
             instructions="Saluda al usuario de manera cordial e introduciendo al Govlab"
         )
-        
+
         logger.info("Agent session started successfully")
 
     except Exception as e:
@@ -229,3 +223,6 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error(f"Failed to start application: {e}", exc_info=True)
         raise
+
+
+
