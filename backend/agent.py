@@ -12,7 +12,7 @@ from livekit.agents import (
     WorkerOptions,
     cli,
     llm,
-    AgentSession,  # Nueva interfaz unificada
+    AgentSession,
 )
 from livekit.plugins import openai
 
@@ -70,17 +70,12 @@ Un laboratorio de innovación dedicado a encontrar soluciones a problemas públi
 PROPÓSITO FUNDAMENTAL:
 Desarrollar soluciones tangibles a problemas públicos basadas en evidencia, desde un enfoque humanístico que reconoce a la persona humana como el centro de las políticas públicas y decisiones de gobierno.
 
-(Se omite el resto de las instrucciones para mayor claridad)
+(Se omiten detalles adicionales para mayor claridad)
 """,
                     voice="echo",
                     temperature=0.6,
-                    model="gpt-4o-realtime-preview",  # Usando el modelo estable actual
-                    turn_detection=openai.realtime.ServerVadOptions(
-                        threshold=0.6,
-                        prefix_padding_ms=200,
-                        silence_duration_ms=500,
-                        create_response=True
-                    )
+                    model="gpt-4o-realtime-preview"  # Usando el modelo estable actual
+                    # Se elimina el parámetro turn_detection ya que ServerVadOptions ya no existe
                 )
                 logger.info("Realtime model initialized successfully")
                 break
@@ -89,7 +84,7 @@ Desarrollar soluciones tangibles a problemas públicos basadas en evidencia, des
                     raise
                 logger.warning(f"Model initialization attempt {attempt + 1} failed: {e}")
                 await asyncio.sleep(1)
-
+        
         # Crear el contexto de chat y agregar un mensaje de sistema
         chat_ctx = llm.ChatContext()
         chat_ctx.append(
@@ -97,19 +92,19 @@ Desarrollar soluciones tangibles a problemas públicos basadas en evidencia, des
             text="Contexto del Usuario: estas hablando con un cliente potencial. Saluda al usuario de manera cordial e introduce al GovLab."
         )
 
-        # Crear la sesión del agente usando AgentSession y pasando el modelo en tiempo real con el parámetro "llm"
+        # Crear la sesión del agente usando AgentSession, pasando el modelo en tiempo real
         session = AgentSession(
             llm=realtime_model,
             chat_ctx=chat_ctx,
         )
-
+        
         # Iniciar la sesión del agente en la sala y para el participante
         await session.start(ctx.room, participant)
-        # Enviar un mensaje inicial
+        # Enviar el mensaje inicial
         await session.send("Hola, ¿en qué puedo ayudarte hoy?", allow_interruptions=True)
-
+        
         logger.info("Agent session initialized and started successfully")
-
+        
     except Exception as e:
         logger.error(f"Failed to initialize AgentSession: {e}", exc_info=True)
         raise
@@ -124,3 +119,4 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error(f"Failed to start application: {e}", exc_info=True)
         raise
+
