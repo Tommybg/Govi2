@@ -194,7 +194,7 @@ async def entrypoint(ctx: JobContext):
             )
         )
         
-        # Create the agent session
+        # Create the agent session using the realtime model as the LLM
         session = AgentSession(
             llm=model,
         )
