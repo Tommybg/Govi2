@@ -182,7 +182,7 @@ async def entrypoint(ctx: JobContext):
 
         # 1) Create the realtime LLM model
         model = openai.realtime.RealtimeModel(
-            voice="echo",
+            voice="ash",
             model="gpt-4o-realtime-preview",
             temperature=0.6,
         )
