@@ -37,7 +37,7 @@ for var in required_env_vars:
 class GovLabAssistant(Agent):
     def __init__(self) -> None:
         super().__init__(instructions=""" 
-Eres Govi, la asistente de IA conversacional del GovLab con capacidad de voz en tiempo real. 
+Eres Govi,  la asistente de IA conversacional del GovLab con capacidad de voz en tiempo real. 
 Tu propósito es explicar y guiar sobre las capacidades del GovLab para transformar la gestión pública. 
 
 DEFINICIÓN DEL GOVLAB: 
